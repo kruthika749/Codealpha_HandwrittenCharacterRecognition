@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-"""
-handwritten_full.py
-Single-file project for Handwritten Character Recognition (MNIST / EMNIST)
+
+"
+HANDWRITTEN CHARACTER RECOGNITION
 
 Features:
  - Train CNN on MNIST or EMNIST
@@ -14,12 +13,6 @@ Features:
 
 Requirements:
  pip install torch torchvision matplotlib scikit-learn pillow tqdm streamlit
-
-Example usage:
-  python handwritten_full.py --mode train --dataset emnist --epochs 8 --batch_size 128
-  python handwritten_full.py --mode eval --dataset mnist --checkpoint pytorch_models/handwritten_cnn.pth
-  python handwritten_full.py --mode predict --image test.png --checkpoint pytorch_models/handwritten_cnn.pth
-  streamlit run handwritten_full.py -- --mode serve --checkpoint pytorch_models/handwritten_cnn.pth
 
 """
 import argparse
@@ -47,9 +40,9 @@ try:
 except Exception:
     st = None
 
-# ------------------------------
+
 # Model: CNN
-# ------------------------------
+
 class CNN(nn.Module):
     def __init__(self, num_classes: int = 10):
         super(CNN, self).__init__()
@@ -87,9 +80,8 @@ class CNN(nn.Module):
         x = self.fc(x)
         return x
 
-# ------------------------------
+
 # Utilities
-# ------------------------------
 def get_device() -> str:
     return "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -135,9 +127,9 @@ def load_datasets(dataset: str = "mnist", emnist_split: str = "balanced", root: 
             classes = [str(i) for i in range(len(set(train_ds.targets.tolist())))]
     return train_ds, test_ds, classes
 
-# ------------------------------
+
 # Training & Evaluation
-# ------------------------------
+
 def train(model: nn.Module, train_loader: DataLoader, val_loader: DataLoader, device: str,
           epochs: int = 8, lr: float = 1e-3, save_dir: str = "pytorch_models", checkpoint_name: str = "handwritten_cnn.pth"):
     criterion = nn.CrossEntropyLoss()
@@ -192,9 +184,9 @@ def evaluate(model: nn.Module, loader: DataLoader, device: str) -> float:
             correct += (predicted == labels).sum().item()
     return 100.0 * correct / total
 
-# ------------------------------
+
 # Predict / Inference helpers
-# ------------------------------
+
 def load_checkpoint(model: nn.Module, checkpoint_path: str, device: str):
     state = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(state)
@@ -223,9 +215,9 @@ def predict_image(model: nn.Module, image_path: str, device: str, transform=None
     readable = classes[label] if classes is not None and label < len(classes) else str(label)
     return label, confidence, readable
 
-# ------------------------------
+
 # Visualization: plots, confusion matrix
-# ------------------------------
+
 def plot_history(history: dict, out_dir: str = "reports"):
     ensure_dir(out_dir)
     plt.figure()
@@ -297,9 +289,9 @@ def confusion_matrix_and_samples(model: nn.Module, loader: DataLoader, classes: 
     plt.close(fig2)
     print("Saved sample predictions to", samples_path)
 
-# ------------------------------
-# ONNX Export
-# ------------------------------
+
+# ONNX ExporT
+
 def export_onnx(model: nn.Module, checkpoint_path: str, device: str, num_classes: int, out_path: str = "pytorch_models/handwritten_cnn.onnx"):
     # Load checkpoint into model if checkpoint provided
     model.to(device)
@@ -441,4 +433,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
